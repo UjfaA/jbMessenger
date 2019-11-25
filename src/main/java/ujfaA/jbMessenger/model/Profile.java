@@ -18,6 +18,13 @@ public class Profile {
 	public Profile() {
 	}
 
+	public Profile(long id, String profileName, String firstName, String lastName) {
+		this.id = id;
+		this.profileName = profileName;
+		this.firstName = firstName;
+		this.lastName = lastName;
+	}
+
 	public long getId() {
 		return id;
 	}
@@ -56,12 +63,5 @@ public class Profile {
 
 	public void setCreated(Date created) {
 		this.created = created;
-	}
-
-	public Profile(long id, String profileName, String firstName, String lastName) {
-		this.id = id;
-		this.profileName = profileName;
-		this.firstName = firstName;
-		this.lastName = lastName;
 	}
 }

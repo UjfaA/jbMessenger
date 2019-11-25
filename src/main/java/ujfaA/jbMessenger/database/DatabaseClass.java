@@ -12,8 +12,14 @@ public class DatabaseClass {
 	private static Map<String, Profile> profiles = new HashMap<>();
 	
 	static {
-		messages.put(1L, new Message(1L, "Hello World", "Koshuk"));
-		messages.put(2L, new Message(2L, "Hello Jersey", "Koshuk"));
+		
+		profiles.put("admin", new Profile(1L, "admin", "Super", "Admin"));
+		profiles.put("alex", new Profile(2L, "alex", "Aleksandar", "Ujfaluši"));
+		profiles.put("ujfa", new Profile(3L, "ujfa", "Alex", "Ujfa"));
+
+		messages.put(1L, new Message(1L, "Hello World", "admin"));
+		messages.put(2L, new Message(2L, "Hello Jersey", "admin"));
+		messages.get(2L).getCreated().setYear(2000);
 	}
 	
 	public static Map<Long, Message> getMessages() {

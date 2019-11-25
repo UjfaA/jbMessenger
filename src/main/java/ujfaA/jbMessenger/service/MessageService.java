@@ -1,6 +1,7 @@
 package ujfaA.jbMessenger.service;
 
 import java.util.ArrayList;
+import java.util.Calendar;
 import java.util.List;
 import java.util.Map;
 
@@ -9,15 +10,36 @@ import ujfaA.jbMessenger.model.Message;
 
 public class MessageService {
 	
+	private static long messagesCreated = DatabaseClass.getMessages().size();
+	
 	private Map<Long, Message> messages = DatabaseClass.getMessages();
 	
 	public MessageService() {
-//		messages.put(1L, new Message(1L, "Hello World", "Koshuk"));
-//		messages.put(2L, new Message(2L, "Hello Jersey", "Koshuk"));
 	}
 	
 	public List<Message> getAllMessages() {
 		return new ArrayList<Message>(messages.values());
+	}
+	
+	public List<Message> getAllMessagesForYear(int year) {
+		
+		List<Message> messagesForYear = new ArrayList<Message>();
+		Calendar cal = Calendar.getInstance();
+		for (Message message : messages.values()) {
+			cal.setTime(message.getCreated());
+			if (cal.get(Calendar.YEAR) == year)
+				messagesForYear.add(message);
+		}
+		return messagesForYear;
+	}
+	
+	public List<Message> getAllMessagesPagineted(int start, int size) {
+		
+		ArrayList<Message> list = new ArrayList<Message>(messages.values());
+		start -= 1;
+		if (start + size > list.size())
+			return new ArrayList<Message>();
+		return list.subList(start, start + size);
 	}
 	
 	public Message getMessage(long id) {
@@ -25,7 +47,8 @@ public class MessageService {
 	}
 	
 	public Message addMessage(Message message) {
-		message.setId(messages.size() +1);
+		messagesCreated++;
+		message.setId(messagesCreated);
 		messages.put(message.getId(), message);
 		return message;
 	}
