@@ -6,6 +6,7 @@ import java.util.List;
 import java.util.Map;
 
 import ujfaA.jbMessenger.database.DatabaseClass;
+import ujfaA.jbMessenger.exception.DataNotFoundException;
 import ujfaA.jbMessenger.model.Message;
 
 public class MessageService {
@@ -43,7 +44,10 @@ public class MessageService {
 	}
 	
 	public Message getMessage(long id) {
-		return messages.get(id);
+		Message message = messages.get(id);
+		if (message == null)
+			throw new DataNotFoundException("Message with id " + id + " not found.");
+		return message;
 	}
 	
 	public Message addMessage(Message message) {
@@ -54,7 +58,7 @@ public class MessageService {
 	}
 	
 	public Message updateMessage(Message message) {
-		if (message.getId() <= 0)
+		if ( ! messages.containsKey(message.getId()))
 			return null;
 		messages.replace(message.getId(), message);
 		return message;

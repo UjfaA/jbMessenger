@@ -1,18 +1,25 @@
 package ujfaA.jbMessenger.resources;
 
+import java.net.URI;
 import java.util.List;
 
 import javax.ws.rs.BeanParam;
 import javax.ws.rs.Consumes;
 import javax.ws.rs.DELETE;
 import javax.ws.rs.GET;
+import javax.ws.rs.NotFoundException;
 import javax.ws.rs.POST;
 import javax.ws.rs.PUT;
 import javax.ws.rs.Path;
 import javax.ws.rs.PathParam;
 import javax.ws.rs.Produces;
+import javax.ws.rs.core.Context;
 import javax.ws.rs.core.MediaType;
+import javax.ws.rs.core.Response;
+import javax.ws.rs.core.Response.Status;
+import javax.ws.rs.core.UriInfo;
 
+import ujfaA.jbMessenger.model.ErrorMessage;
 import ujfaA.jbMessenger.model.Message;
 import ujfaA.jbMessenger.resources.beans.MessageFilter;
 import ujfaA.jbMessenger.service.MessageService;
@@ -34,8 +41,14 @@ public class MessageResource {
 	}
 	
 	@POST
-	public Message addMessage(Message message) {
-		return messageService.addMessage(message);
+	public Response addMessage(@Context UriInfo uriinfo, Message message) {
+		
+		Message newMessage = messageService.addMessage(message);
+		String newId = String.valueOf(newMessage.getId());
+		URI uri = uriinfo.getAbsolutePathBuilder().path(newId).build();
+		return Response.created(uri)
+				.entity(newMessage)
+				.build();
 	}
 	
 	@Path("/{messageId}")
@@ -48,7 +61,14 @@ public class MessageResource {
 	@PUT
 	public Message updateMessage(@PathParam("messageId") long id, Message message) {
 		message.setId(id);
-		return messageService.updateMessage(message);	
+		Message updatedMessage = messageService.updateMessage(message);	
+		if (updatedMessage == null) {
+			Response response = Response.status(Status.NOT_FOUND)
+									.entity(new ErrorMessage("Not Found", 404, "Useful link"))
+									.build();
+			throw new NotFoundException(response);
+		}
+		return updatedMessage;
 	}
 	
 	@Path("/{messageId}")
